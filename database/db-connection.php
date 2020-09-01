@@ -4,7 +4,7 @@
 
     // setting connection variables
     $servername = $credentials['hostname'];
-    $database = $credentials['base'];
+    $database = $credentials['database'];
     $username = $credentials['user'];
     $password = $credentials['password'];
 
