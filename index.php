@@ -1,7 +1,7 @@
 <?php
 	class ParseCSVFile
 	{
-		//returns parsed CSV file as and array
+		//returns parsed CSV file as an associated array
 		public function readCSVFile($csvFilename){
 
 			$header = NULL;
@@ -12,14 +12,16 @@
 			}
 
 			if(($handle = fopen($csvFilename, 'r')) != FALSE){
-				while($row = fgetcsv($handle, 1000, ',')){
-					// excluding header
-					if(!$header){
-						$header = $row;
-					}else{
-						// $returnArray[] = array_combine($header, $row);
-						array_push($returnArray, $row);
+				$sourceCounter = 0;
+				while($source = fgetcsv($handle, 1000, ',')){
+					if( 0 === $sourceCounter) {
+						$headerRecord = $source;
+					} else {
+						foreach( $source as $key => $value) {
+							$returnArray[ $sourceCounter - 1][ $headerRecord[ $key] ] = $value;  
+						}
 					}
+					$sourceCounter++;
 				}
 			}
 
@@ -29,22 +31,34 @@
 		// TODO - clean up adresses etc.
 		// returns parsed array
 		public function parseCSVarray($csvArray){
+			// $parsedArray = array();
+
+			// return $parsedArray;
 			return $csvArray;
 		}
 
 		// writes array to database
 		public function writeToDatabase($dbConnection, $parsedArray){
-			foreach($parsedArray as &$source){
-				$insertStatement = "INSERT INTO php_opgave (source_id, source_status, source_name, source_desc, source_address_road, source_address_zip, source_address_city, source_external_id, source_latitude, source_longitude) VALUES('$source[0]', '$source[1]', '$source[2]', '$source[3]', '$source[4]', '$source[5]', '$source[6]', '$source[7]', '$source[8]', '$source[9]')";
+			foreach($parsedArray as &$row){
+				$insertStatement = "INSERT INTO php_opgave (source_id, source_status, source_name, source_desc, source_address_road, source_address_zip, source_address_city, source_external_id, source_latitude, source_longitude) VALUES('$row[source_id]', '$row[source_status]', '$row[source_name]', '$row[source_desc]', '$row[source_address_road]', '$row[source_address_zip]', '$row[source_address_city]', '$row[source_external_id]', '$row[source_latitude]', '$row[source_longitude]')";
 				$dbConnection->exec($insertStatement);
 			}
 		}
 	}
 
-	
-	$classInstance = new ParseCSVFile();
-	$csvFileAsArray = $classInstance->readCSVFile('./data/datafile.csv');
-	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
+	// program execution
+
+	// database conection
 	$dbConnection = require('./database/db-connection.php');
+
+	// instantiation
+	$classInstance = new ParseCSVFile();
+	// read CSV file into array
+	$csvFileAsArray = $classInstance->readCSVFile('./data/datafile.csv');
+	print_r("<br />");
+	print_r("<br />");
+	print_r("<br />");
+	// parse CSV array according to rules
+	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
 	$classInstance->writeToDatabase($dbConnection, $parsedArray);
 ?>
