@@ -28,16 +28,21 @@
 			return $returnArray;
 		}
 
-		// TODO - clean up adresses etc.
 		// returns parsed array
+		// cleaned up adresses, checked zip codes etc.
 		public function parseCSVarray($csvArray){
 			$parsedArray = array();
 			foreach($csvArray as $source){
+				// only add source if active or inactive
 				if($source['source_status'] == 'active' || $source['source_status'] == 'inactive'){
-					array_push($parsedArray, $source);
+					// only add source if address if valid
+					if($this->isValidAddress($source['source_address_road'], $source['source_address_zip'], $source['source_address_city'])){
+						array_push($parsedArray, $source);
+					}
 				}
 			}
 
+			print_r($parsedArray);
 			return $parsedArray;
 		}
 
@@ -48,6 +53,27 @@
 				$dbConnection->exec($insertStatement);
 			}
 		}
+
+		// returns true if address is valid according to ruleset
+		public function isValidAddress($roadname, $zipcode, $city){
+			
+			// no house number ?
+			if(preg_match('/\\d/', $roadname) == 0){
+				return false;
+			}
+
+			// is zipcode 4 characters and ciphers only ?
+			if(strlen($zipcode) != 4 || preg_match_all("/\d/", $zipcode) != 4){
+				return false;
+			}
+
+			// is city name less than 3 character ?
+			if(strlen($city) < 3){
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	// program execution
@@ -55,14 +81,18 @@
 	// database conection
 	$dbConnection = require('./database/db-connection.php');
 
-	// instantiation
+	// instantiation of class
 	$classInstance = new ParseCSVFile();
+
 	// read CSV file into array
 	$csvFileAsArray = $classInstance->readCSVFile('./data/datafile.csv');
-	print_r("<br />");
-	print_r("<br />");
-	print_r("<br />");
+
 	// parse CSV array according to rules
 	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
+
+	// print result to screen - not in task
+	var_dump($parsedArray);
+
+	// write to database
 	$classInstance->writeToDatabase($dbConnection, $parsedArray);
 ?>
