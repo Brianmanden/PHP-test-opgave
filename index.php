@@ -1,25 +1,7 @@
 <?php
-	// require hidden database credentials
-	require('./secret/db-credentials.php');
-
-	// setting variables
-	$servername = $credentials['hostname'];
-	$database = $credentials['base'];
-	$username = $credentials['user'];
-	$password = $credentials['password'];
-
-	try {
-		$conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
-		// set the PDO error mode to exception
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		//echo "Connected successfully";
-	} catch(PDOException $e) {
-		echo "Connection failed: " . $e->getMessage();
-	}
-
 	class ParseCSVFile
 	{
-		// returns CSV file as and array
+		//returns parsed CSV file as and array
 		public function readCSVFile($csvFilename){
 
 			$header = NULL;
@@ -31,10 +13,12 @@
 
 			if(($handle = fopen($csvFilename, 'r')) != FALSE){
 				while($row = fgetcsv($handle, 1000, ',')){
+					// excluding header
 					if(!$header){
 						$header = $row;
 					}else{
-						$returnArray[] = array_combine($header, $row);
+						// $returnArray[] = array_combine($header, $row);
+						array_push($returnArray, $row);
 					}
 				}
 			}
@@ -42,25 +26,25 @@
 			return $returnArray;
 		}
 
+		// TODO - clean up adresses etc.
 		// returns parsed array
-		// addresses cleaned up etc.
 		public function parseCSVarray($csvArray){
-			return array();
+			return $csvArray;
 		}
 
 		// writes array to database
-		public function writeToDatabase(){
+		public function writeToDatabase($dbConnection, $parsedArray){
+			foreach($parsedArray as &$source){
+				$insertStatement = "INSERT INTO php_opgave (source_id, source_status, source_name, source_desc, source_address_road, source_address_zip, source_address_city, source_external_id, source_latitude, source_longitude) VALUES('$source[0]', '$source[1]', '$source[2]', '$source[3]', '$source[4]', '$source[5]', '$source[6]', '$source[7]', '$source[8]', '$source[9]')";
+				$dbConnection->exec($insertStatement);
+			}
 		}
-
 	}
 
+	
 	$classInstance = new ParseCSVFile();
 	$csvFileAsArray = $classInstance->readCSVFile('./data/datafile.csv');
-	
-	// test output
-	print_r($csvFileAsArray);
-	echo '<br /><br /><br />';
-	echo $csvFileAsArray[0]['source_address_road'];
-	echo '<br /><br /><br />';
-	echo $csvFileAsArray[1]['source_address_road'];
+	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
+	$dbConnection = require('./database/db-connection.php');
+	$classInstance->writeToDatabase($dbConnection, $parsedArray);
 ?>
