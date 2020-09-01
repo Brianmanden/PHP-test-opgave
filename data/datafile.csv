@@ -1,0 +1,15 @@
+source_id,source_status,source_name,source_desc,source_address_road,source_address_zip,source_address_city,source_external_id,source_latitude,source_longitude
+1,active,Blind Taught,,Tværgyden 19,2930,Klampenborg,wat-422829,10.13270790973,-55.62620986641
+2,active,Taught Cup of Tea,,Vestergade 44,2980,Kokkedal,wat-935307,-76.10217601415,5.62878225734
+3,inactive,Tissue of Advise,,Toftvej,1205,København K,wat-892393,"20,77081549918","157,88105643741"
+4,deleted,Within Taught,,Askelund 25,4793,Bogø By,wat-291901,49.95584591063,-27.53865308646
+5,deleted,Apprenticeship the Bird,,Svendborg Landevej 19,1303,København K,wat-827401,-18.51493301549,16.87335587552
+6,inactive,Inell Pauley,,Lumbyholmvej 57,3050,Humlebæk,wat-196781,51.33970922407,114.84316479398
+7,active,As the Crow Advise,,Jomfrustien 26,2791,,wat-345042,-68.79643358507,-130.94123224781
+8,deleted,Cat Taught Your Tongue?,,Tårup Byvej 78,1265,København K,wat-788792,3.11346161237,137.20449667109
+9,active,Within Taught,,Espegyden 54,3400,Hillerød,wat-756097,-48.05538555424,165.45925103457
+10,active,Carlota Shultz,,Muusgården 65,8550,Ryomgård,wat-340265,-22.66362918988, -88.65810741535
+11,deleted,Agustin Thorn,,Søndergade 66,2605,Brøndby,wat-715830,"-53,21553834666","90,98025606586"
+12,active,Kellee Orozco,,,,,wat-874741,68.92022441724,71.48633486364
+13,deleted,India Sigler,,Højbovej 46,1114,København K,wat-696979,75.91667128781,17.66153137495
+14,active,Madaline Bullock,,Ørbækvej 43,,Frederiksberg C,wat-146328,12.02377404445,77.34169287488
