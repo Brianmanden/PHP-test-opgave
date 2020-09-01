@@ -31,10 +31,14 @@
 		// TODO - clean up adresses etc.
 		// returns parsed array
 		public function parseCSVarray($csvArray){
-			// $parsedArray = array();
+			$parsedArray = array();
+			foreach($csvArray as $source){
+				if($source['source_status'] == 'active' || $source['source_status'] == 'inactive'){
+					array_push($parsedArray, $source);
+				}
+			}
 
-			// return $parsedArray;
-			return $csvArray;
+			return $parsedArray;
 		}
 
 		// writes array to database
