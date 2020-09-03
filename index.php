@@ -1,10 +1,13 @@
 <?php
 	class ParseCSVFile
 	{
-		//returns parsed CSV file as an associated array
+		/**
+		 * readCSVFile returns parsed CSV file as an associated array
+		 *
+		 * @param [CSV file] $csvFilename
+		 * @return array
+		 */
 		public function readCSVFile($csvFilename){
-
-			$header = NULL;
 			$returnArray = array();
 
 			if(!file_exists($csvFilename) || !is_readable($csvFilename)){
@@ -28,10 +31,9 @@
 			return $returnArray;
 		}
 
-		// returns parsed array
-		// cleaned up adresses, checked zip codes etc.
 		/**
-		 * Undocumented function
+		 * parseCVSarray returns parsed array
+		 * Cleans up adresses, checks zip codes etc.
 		 *
 		 * @param [type] $csvArray
 		 * @return void
@@ -48,11 +50,16 @@
 				}
 			}
 
-			print_r($parsedArray);
 			return $parsedArray;
 		}
 
-		// writes array to database
+		/**
+		 * writeToDatabase writes array to database
+		 *
+		 * @param [database connection] $dbConnection
+		 * @param [array] $parsedArray
+		 * @return void
+		 */
 		public function writeToDatabase($dbConnection, $parsedArray){
 			foreach($parsedArray as &$row){
 				$insertStatement = "INSERT INTO php_opgave (source_id, source_status, source_name, source_desc, source_address_road, source_address_zip, source_address_city, source_external_id, source_latitude, source_longitude) VALUES('$row[source_id]', '$row[source_status]', '$row[source_name]', '$row[source_desc]', '$row[source_address_road]', '$row[source_address_zip]', '$row[source_address_city]', '$row[source_external_id]', '$row[source_latitude]', '$row[source_longitude]')";
@@ -60,7 +67,14 @@
 			}
 		}
 
-		// returns true if address is valid according to ruleset
+		/**
+		 * isValidAddress returns true/false if address validates according to ruleset
+		 *
+		 * @param [string] $roadname
+		 * @param [string] $zipcode
+		 * @param [string] $city
+		 * @return boolean
+		 */
 		public function isValidAddress($roadname, $zipcode, $city){
 			
 			// no house number ?
@@ -68,7 +82,7 @@
 				return false;
 			}
 
-			// is zipcode 4 characters and ciphers only ?
+			// is zipcode 4 characters and is zipcode ciphers only ?
 			if(strlen($zipcode) != 4 || preg_match_all("/\d/", $zipcode) != 4){
 				return false;
 			}
@@ -82,23 +96,26 @@
 		}
 	}
 
-	// program execution
 
-	// database conection
+	//	
+	// Program execution
+	//
+	 
+	// Establish database conection
 	$dbConnection = require('./database/db-connection.php');
 
-	// instantiation of class
+	// Instantiate class
 	$classInstance = new ParseCSVFile();
 
-	// read CSV file into array
+	// Read CSV file into array
 	$csvFileAsArray = $classInstance->readCSVFile('./data/datafile.csv');
 
-	// parse CSV array according to rules
+	// Parse CSV array according to rules
 	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
 
-	// print result to screen - not in task
+	// Print result to screen - not in task - can be omitted
 	var_dump($parsedArray);
 
-	// write to database
+	// Write to database
 	$classInstance->writeToDatabase($dbConnection, $parsedArray);
 ?>
