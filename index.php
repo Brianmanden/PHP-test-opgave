@@ -30,6 +30,12 @@
 
 		// returns parsed array
 		// cleaned up adresses, checked zip codes etc.
+		/**
+		 * Undocumented function
+		 *
+		 * @param [type] $csvArray
+		 * @return void
+		 */
 		public function parseCSVarray($csvArray){
 			$parsedArray = array();
 			foreach($csvArray as $source){
@@ -67,8 +73,8 @@
 				return false;
 			}
 
-			// is city name less than 3 character ?
-			if(strlen($city) < 3){
+			// is city name less than 2 character ?
+			if(strlen($city) < 2){
 				return false;
 			}
 
