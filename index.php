@@ -21,7 +21,12 @@
 						$headerRecord = $source;
 					} else {
 						foreach( $source as $key => $value) {
-							$returnArray[ $sourceCounter - 1][ $headerRecord[ $key] ] = $value;  
+							if($headerRecord[$key] == 'source_latitude' || $headerRecord[$key] == 'source_longitude'){
+								$convertedCoord = $this->normalizeCoordinate($value);
+								$returnArray[ $sourceCounter - 1][ $headerRecord[ $key] ] = $convertedCoord;
+							}else{
+								$returnArray[ $sourceCounter - 1][ $headerRecord[ $key] ] = $value;
+							}
 						}
 					}
 					$sourceCounter++;
@@ -40,6 +45,7 @@
 		 */
 		public function parseCSVarray($csvArray){
 			$parsedArray = array();
+
 			foreach($csvArray as $source){
 				// only add source if active or inactive
 				if($source['source_status'] == 'active' || $source['source_status'] == 'inactive'){
@@ -76,7 +82,6 @@
 		 * @return boolean
 		 */
 		public function isValidAddress($roadname, $zipcode, $city){
-			
 			// no house number ?
 			if(preg_match('/\\d/', $roadname) == 0){
 				return false;
@@ -93,6 +98,16 @@
 			}
 
 			return true;
+		}
+
+		/**
+		 * normalizeCoordinates replaces commas in coordinate point with dots
+		 *
+		 * @param [string] $coordinate
+		 * @return string
+		 */
+		public function normalizeCoordinate($coordinate){
+			return str_replace(',', '.', $coordinate);
 		}
 	}
 
@@ -112,9 +127,6 @@
 
 	// Parse CSV array according to rules
 	$parsedArray = $classInstance->parseCSVarray($csvFileAsArray);
-
-	// Print result to screen - not in task - can be omitted
-	var_dump($parsedArray);
 
 	// Write to database
 	$classInstance->writeToDatabase($dbConnection, $parsedArray);
